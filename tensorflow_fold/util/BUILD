@@ -54,7 +54,7 @@ fold_py_extension(
     outs = ["proto_tools.so"],
     deps = [
         "@org_tensorflow//tensorflow/core:framework_headers_lib",
-        "@org_tensorflow//util/python:python_headers",
+        "@local_config_python//:python_headers",
         "@protobuf_archive//:protobuf",
     ],
 )

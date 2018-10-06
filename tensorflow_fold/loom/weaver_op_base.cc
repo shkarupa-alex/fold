@@ -74,7 +74,7 @@ WeaverOpBase::WeaverOpBase(OpKernelConstruction *c)
   OP_REQUIRES(
       c, constant_types_.size() == num_type_shapes_, InvalidArgument(
           "metadata has ", num_type_shapes_, " TypeShapes, but ",
-          "constant_types has ", constant_types_.size()))
+          "constant_types has ", constant_types_.size()));
 }
 
 void WeaverOpBase::Compute(OpKernelContext *c) {

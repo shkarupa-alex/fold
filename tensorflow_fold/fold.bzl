@@ -190,7 +190,7 @@ def fold_py_wrap_cc(name, srcs, swig_includes=[], deps=[], copts=[], **kwargs):
   # Convert a rule name such as foo/bar/baz to foo/bar/_baz.so
   # and use that as the name for the rule producing the .so file.
   cc_library_name = "/".join(name.split("/")[:-1] + ["_" + module_name + ".so"])
-  extra_deps = ["@org_tensorflow//util/python:python_headers"]
+  extra_deps = ["@local_config_python//:python_headers"]
   _fold_py_wrap_cc(
       name=name + "_py_wrap",
       srcs=srcs,
