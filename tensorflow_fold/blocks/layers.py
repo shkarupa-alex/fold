@@ -667,7 +667,7 @@ def get_local_arguments(fun, is_method=False):
 
   args = [lvals[k] for k in arg_names]
   kwargs_a = [(k, lvals[k], d) for (k, d) in zip(kwarg_names, argspec.defaults)]
-  kwargs = [(k, v) for (k, v, d) in kwargs_a if v != d]
+  kwargs = [(k, v) for (k, v, d) in kwargs_a if v is not None and d is None or v != d]
 
   if is_method: args = args[1:]   # strip off the self argument
   return (args, kwargs)

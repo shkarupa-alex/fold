@@ -19,7 +19,7 @@ limitations under the License.
 
 #include "absl/memory/memory.h"
 #include "tensorflow/c/c_api_internal.h"
-#include "tensorflow/c/eager/runtime.h"
+#include "tensorflow/core/common_runtime/eager/kernel_and_device.h"
 #include "tensorflow/core/common_runtime/device.h"
 #include "tensorflow/core/common_runtime/device_factory.h"
 #include "tensorflow/core/common_runtime/device_mgr.h"
@@ -215,7 +215,7 @@ class TfKernelAdapter {
 
     std::vector<tensorflow::Tensor> outputs;
     // Run the tensorflow kernel, which will allocate its own tensors.
-    Status status = kernel_.Run(&inputs, &outputs);
+    Status status = kernel_.Run(&inputs, &outputs, nullptr);
     if (!status.ok()) {
       LOG(ERROR) << "Error invoking kernel. " << status;
     }

@@ -44,10 +44,6 @@ function main() {
 
   cp tensorflow_fold/util/setup.py ${TMPDIR}
 
-  # Before we leave the top-level directory, make sure we know how to
-  # call python.
-  source tensorflow/tools/python_bin_path.sh
-
   pushd ${TMPDIR}
   echo $(date) : "=== Building wheel"
   "${PYTHON_BIN_PATH:-python}" setup.py bdist_wheel >/dev/null

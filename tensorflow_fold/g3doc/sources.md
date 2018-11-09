@@ -4,16 +4,15 @@ Building Fold requires Bazel; get
 it [here](https://bazel.build/versions/master/docs/install.html). The do:
 
 ```
-virtualenv foo
-source ./foo/bin/activate
 pip install pip --upgrade
 pip install wheel --upgrade
 pip install numpy --upgrade
-git clone --recurse-submodules https://github.com/tensorflow/fold
-cd fold/tensorflow
-./configure
-cd ..
+bazel build tensorflow_fold/...
 ```
+
+If your TensorFlow not built from source add --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0" to build/test commands.
+
+If build fails with GRPC linking failure on MacOS X, add --copt -DGRPC_BAZEL_BUILD to build/test commands.
 
 Follow the
 instructions

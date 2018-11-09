@@ -161,7 +161,7 @@ class DeviceAwareTest : public ::testing::Test {
 
 
 // Compute softmax(input). Helper function for unit tests only.
-template<uint64_t N>
+template<unsigned long N>
 std::array<float, N> softmax(const std::array<float, N>& input) {
   double sum = 0.0;
   for (int i = 0; i < N; ++i) {
@@ -179,7 +179,7 @@ std::array<float, N> softmax(const std::array<float, N>& input) {
 
 // Compute cross-entropy of two probability distributions. Helper function for
 // tests only.
-template<uint64_t S>
+template<unsigned long S>
 float cross_entropy(const std::array<float, S>& labels,
                     const std::array<float, S>& probabilities) {
   double sum = 0.0;

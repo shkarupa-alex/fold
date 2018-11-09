@@ -129,10 +129,8 @@ fold_cc_library(
         ":llgtm_eigen_backend",
         "@com_google_absl//absl/memory",
         "@org_tensorflow//tensorflow/c:c_api",
-        "@org_tensorflow//tensorflow/c:c_api_internal",
-        "@org_tensorflow//tensorflow/c/eager:runtime",
+        "@org_tensorflow//tensorflow/c/eager:c_api",
         "@org_tensorflow//tensorflow/core:core_cpu",
-        "@org_tensorflow//tensorflow/core:core_cpu_internal",
         "@org_tensorflow//tensorflow/core:framework",
         "@org_tensorflow//tensorflow/core:lib",
         "@org_tensorflow//tensorflow/core:protos_all_cc",
@@ -215,6 +213,10 @@ fold_cuda_cc_test(
         ":llgtm_eigen",
         ":test_framework",
     ],
+    tags = [
+        "manual",
+        "requires_cudnn5",
+    ],
 )
 
 fold_cc_test(
@@ -224,6 +226,7 @@ fold_cc_test(
         "test/evaluator_test_tf.cc",
     ],
     deps = [
+#        ":llgtm",
         ":llgtm_tf",
         ":test_framework",
     ],
@@ -252,6 +255,10 @@ fold_cuda_cc_test(
     deps = [
         ":llgtm_eigen",
         ":test_framework",
+    ],
+    tags = [
+        "manual",
+        "requires_cudnn5",
     ],
 )
 
@@ -284,24 +291,4 @@ fold_py_nocompile_test(
     data = ["graph_nocompile"],
     tags = ["non_compile_test"],
     deps = [],
-)
-
-test_suite(
-    name = "cpu_tests",
-    tests = [
-        "evaluator_test_eigen",
-        # "evaluator_test_tf",  # disabled due to tf visibility
-        "gradients_test_eigen",
-        # "gradients_test_tf",  # disabled due to tf visibility
-        "graph_nocompile_test",
-        "graph_test",
-    ],
-)
-
-test_suite(
-    name = "gpu_tests",
-    tests = [
-        "evaluator_test_eigen_gpu",
-        "gradients_test_eigen_gpu",
-    ],
 )

@@ -60,7 +60,7 @@ class ProtoTest(tf.test.TestCase):
         ">"
         "some_enum: THAT")
     result = proto_tools.serialized_message_to_tree(
-        "tensorflow.fold.CyclicType", example.SerializeToString())
+        "tensorflow.fold.util.CyclicType", example.SerializeToString())
     self.assertEqual(result["some_same"]["many_int32"], [1, 2])
     self.assertEqual(result["some_same"]["some_same"]["many_int32"], [3, 4])
     self.assertEqual(result["some_same"]["some_same"]["some_bool"], False)
@@ -85,7 +85,7 @@ class ProtoTest(tf.test.TestCase):
         ">"
         "some_enum: THAT")
     result = proto_tools.serialized_message_to_tree(
-        "tensorflow.fold.CyclicType3", example.SerializeToString())
+        "tensorflow.fold.util.CyclicType3", example.SerializeToString())
     self.assertEqual(result["some_same"]["many_int32"], [1, 2])
     self.assertEqual(result["some_same"]["some_same"]["many_int32"], [3, 4])
     self.assertEqual(result["some_same"]["some_same"]["some_bool"], False)
@@ -100,7 +100,7 @@ class ProtoTest(tf.test.TestCase):
   def testSerializedMessageToTreeOneofEmpty(self):
     empty_proto = MakeOneAtomProto("").SerializeToString()
     empty_result = proto_tools.serialized_message_to_tree(
-        "tensorflow.fold.OneAtom", empty_proto)
+        "tensorflow.fold.util.OneAtom", empty_proto)
     self.assertEqual(empty_result["atom_type"], None)
     self.assertEqual(empty_result["some_int32"], None)
     self.assertEqual(empty_result["some_int64"], None)
@@ -115,7 +115,7 @@ class ProtoTest(tf.test.TestCase):
   def testSerializedMessageToTreeOneof(self):
     empty_proto = MakeOneAtomProto("some_string: \"x\"").SerializeToString()
     empty_result = proto_tools.serialized_message_to_tree(
-        "tensorflow.fold.OneAtom", empty_proto)
+        "tensorflow.fold.util.OneAtom", empty_proto)
     self.assertEqual(empty_result["atom_type"], "some_string")
     self.assertEqual(empty_result["some_int32"], None)
     self.assertEqual(empty_result["some_int64"], None)
@@ -128,7 +128,7 @@ class ProtoTest(tf.test.TestCase):
     self.assertEqual(empty_result["some_string"], "x")
 
   def testNonConsecutiveEnum(self):
-    name = "tensorflow.fold.NonConsecutiveEnumMessage"
+    name = "tensorflow.fold.util.NonConsecutiveEnumMessage"
     msg = test_pb2.NonConsecutiveEnumMessage(
         the_enum=test_pb2.NonConsecutiveEnumMessage.THREE)
     self.assertEqual(
