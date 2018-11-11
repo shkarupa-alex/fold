@@ -2,6 +2,8 @@
 
 load("@protobuf_archive//:protobuf.bzl", "cc_proto_library")
 load("@protobuf_archive//:protobuf.bzl", "py_proto_library")
+load("@org_tensorflow//tensorflow:tensorflow.bzl", "clean_dep", "tf_cc_test", "tf_cc_binary")
+load("@org_tensorflow//tensorflow/core:platform/default/build_config_root.bzl", "tf_cuda_tests_tags")
 load("@local_config_cuda//cuda:build_defs.bzl", "if_cuda", "cuda_default_copts")
 
 # From tensorflow.bzl:
@@ -24,13 +26,20 @@ def _cuda_copts():
   })
 
 
-fold_cc_binary = native.cc_binary
+fold_cc_binary = tf_cc_binary
 fold_cc_library = native.cc_library
 
 
-def fold_cc_test(deps=[], **kwargs):
-  native.cc_test(deps=deps + ["//tensorflow_fold/util:test_main"],
-                 **kwargs)
+def fold_cc_test(linkopts=[], deps=[], **kwargs):
+  tf_cc_test(
+      linkopts = select({
+          clean_dep("//tensorflow:darwin"): [
+              "-undefined dynamic_lookup",
+          ],
+          "//conditions:default": [],
+      }),
+      deps=deps + ["//tensorflow_fold/util:test_main"],
+      **kwargs)
 
 
 def fold_cuda_library(deps=[], cuda_deps=[], copts=[], **kwargs):
@@ -44,10 +53,11 @@ def fold_cuda_library(deps=[], cuda_deps=[], copts=[], **kwargs):
       **kwargs)
 
 
-def fold_cuda_cc_test(deps=[], cuda_deps=[], copts=[], **kwargs):
+def fold_cuda_cc_test(deps=[], cuda_deps=[], copts=[], tags=[], **kwargs):
   native.cc_test(
       deps=deps + ["//tensorflow_fold/util:test_main"],
       copts=copts + if_cuda(["-DGOOGLE_CUDA=1"]),
+      tags = tags + ["manual"] + tf_cuda_tests_tags(),
       **kwargs)
 
 

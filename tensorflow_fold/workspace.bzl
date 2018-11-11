@@ -10,7 +10,7 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 def tf_fold_workspace():
   tf_workspace(tf_repo_name = "org_tensorflow")
 
-  # ===== gRPC dependencies =====
+#  # ===== gRPC dependencies =====
 #  native.bind(
 #    name = "libssl",
 #    actual = "@boringssl//:ssl",

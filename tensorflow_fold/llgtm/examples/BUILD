@@ -1,9 +1,9 @@
 # Example models for LLGTM.
 
 licenses(["notice"])  # Apache 2.0
-load("@org_tensorflow//tensorflow:tensorflow.bzl", "tf_cc_binary")
+load("//tensorflow_fold:fold.bzl", "fold_cc_binary")
 
-tf_cc_binary(
+fold_cc_binary(
     name = "character_rnn",
     srcs = [
         "character_rnn.cc",
@@ -15,7 +15,7 @@ tf_cc_binary(
     ],
 )
 
-tf_cc_binary(
+fold_cc_binary(
     name = "tree_rnn",
     srcs = [
         "parsetree.h",

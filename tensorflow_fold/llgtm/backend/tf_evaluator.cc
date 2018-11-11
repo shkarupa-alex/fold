@@ -23,6 +23,7 @@ limitations under the License.
 #include "tensorflow/core/common_runtime/device.h"
 #include "tensorflow/core/common_runtime/device_factory.h"
 #include "tensorflow/core/common_runtime/device_mgr.h"
+#include "tensorflow/core/common_runtime/function.h"
 #include "tensorflow/core/framework/allocation_description.pb.h"
 #include "tensorflow/core/framework/allocator.h"
 #include "tensorflow/core/framework/node_def_util.h"
@@ -30,6 +31,7 @@ limitations under the License.
 #include "tensorflow/core/framework/types.h"
 #include "tensorflow/core/lib/core/status.h"
 #include "tensorflow/core/lib/gtl/array_slice.h"
+#include "tensorflow/core/platform/env.h"
 #include "tensorflow/core/public/session_options.h"
 #include "tensorflow/core/public/version.h"
 
@@ -182,8 +184,12 @@ class TfKernelAdapter {
   }
 
   void Init(tensorflow::Device* device) {
-    Status s = tensorflow::KernelAndDevice::InitOp(device,
-                                                   node_def_, &kernel_);
+    tensorflow::FunctionLibraryDefinition fld_(tensorflow::OpRegistry::Global(), {});
+    std::unique_ptr<tensorflow::FunctionLibraryRuntime> flr_ = NewFunctionLibraryRuntime(
+        device->device_mgr(), tensorflow::Env::Default(), device, TF_GRAPH_DEF_VERSION, &fld_, nullptr, {}, nullptr);
+
+    Status s = tensorflow::KernelAndDevice::Init(node_def_, flr_.get(), nullptr, &kernel_);
+
     if (!s.ok()) {
       LOG(ERROR) << "Error initializing kernel. " << s;
     }
@@ -238,7 +244,7 @@ class TfKernelAdapter {
 
   tensorflow::NodeDef node_def_;
 
-  tensorflow::KernelAndDevice kernel_ {nullptr};
+  tensorflow::KernelAndDevice kernel_ = {nullptr, false};
 };
 
 // Constructor and destructor are defined here where we have complete types
@@ -314,6 +320,7 @@ void TfGraphEvaluator::Init() {
   kernels_[kOpConstantFromScalar] = absl::make_unique<TfKernelAdapter>();
   kernels_[kOpConstantFromScalar]->Create("Fill")
                                  .TypeAttr<float>("T")
+                                 .TypeAttr<int32_t>("index_type")
                                  .NumInputs(2)
                                  .Init(cpu_device);
 

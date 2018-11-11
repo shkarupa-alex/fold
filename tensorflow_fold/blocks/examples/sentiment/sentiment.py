@@ -173,7 +173,7 @@ def add_metrics(is_root, is_neutral):
 
 
 def _loss(logits, labels):
-  return tf.nn.softmax_cross_entropy_with_logits(
+  return tf.nn.sparse_softmax_cross_entropy_with_logits(
       logits=logits, labels=labels)
 
 

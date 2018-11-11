@@ -126,7 +126,6 @@ fold_py_library(
         ":deserializing_weaver_op",
         ":loom_py_pb2",
         ":pywrapweaver",
-        # numpy",
         "@org_tensorflow//tensorflow:tensorflow_py",
     ],
 )

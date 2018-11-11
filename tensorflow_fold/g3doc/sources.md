@@ -11,7 +11,6 @@ bazel build tensorflow_fold/...
 ```
 
 If your TensorFlow not built from source add --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0" to build/test commands.
-
 If build fails with GRPC linking failure on MacOS X, add --copt -DGRPC_BAZEL_BUILD to build/test commands.
 
 Follow the
