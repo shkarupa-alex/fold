@@ -21,9 +21,6 @@ fold_py_library(
         "loom_ops.py",
         "metrics.py",
     ],
-    cc_deps = [
-        "//tensorflow_fold/util:proto_tools",
-    ],
     deps = [
         ":result_types",
         ":util",
@@ -31,6 +28,9 @@ fold_py_library(
         "@six_archive//:six",
         "@org_tensorflow//tensorflow:tensorflow_py",
         "//tensorflow_fold/public:loom",
+    ],
+    data = [
+        "//tensorflow_fold/util:proto_tools.so",
     ],
 )
 
@@ -40,14 +40,12 @@ fold_py_library(
     srcs = [
         "test_lib.py",
     ],
-    cc_deps = [
-        "//tensorflow_fold/util:proto_tools",
+    deps = [
+        "@org_tensorflow//tensorflow:tensorflow_py",
     ],
     data = [
         "//tensorflow_fold/util:test_proto_files",
-    ],
-    deps = [
-        "@org_tensorflow//tensorflow:tensorflow_py",
+        "//tensorflow_fold/util:proto_tools.so",
     ],
 )
 

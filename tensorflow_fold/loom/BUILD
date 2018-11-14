@@ -12,7 +12,6 @@ load(
     "fold_cc_library",
     "fold_cc_test",
     "fold_proto_library",
-    "fold_py_binary",
     "fold_py_library",
     "fold_py_test",
     "fold_py_wrap_cc",
@@ -64,6 +63,7 @@ fold_cc_test(
     deps = [
         ":loom_proto",
         ":weaver",
+        "//tensorflow_fold/util:test_main",
         "@org_tensorflow//tensorflow/core:protos_all_cc",
     ],
 )
@@ -74,6 +74,7 @@ fold_py_wrap_cc(
     deps = [
         ":platform",
         ":weaver",
+        "@local_config_python//:python_headers",
     ],
 )
 

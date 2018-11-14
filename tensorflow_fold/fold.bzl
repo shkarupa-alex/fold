@@ -2,82 +2,51 @@
 
 load("@protobuf_archive//:protobuf.bzl", "cc_proto_library")
 load("@protobuf_archive//:protobuf.bzl", "py_proto_library")
-load("@org_tensorflow//tensorflow:tensorflow.bzl", "clean_dep", "tf_cc_test", "tf_cc_binary")
-load("@org_tensorflow//tensorflow/core:platform/default/build_config_root.bzl", "tf_cuda_tests_tags")
-load("@local_config_cuda//cuda:build_defs.bzl", "if_cuda", "cuda_default_copts")
-
-# From tensorflow.bzl:
-def _cuda_copts():
-  """Gets the appropriate set of copts for (maybe) CUDA compilation.
-
-    If we're doing CUDA compilation, returns copts for our particular CUDA
-    compiler.  If we're not doing CUDA compilation, returns an empty list.
-
-    """
-  return cuda_default_copts() + select({
-      "//conditions:default": [],
-      "@local_config_cuda//cuda:using_nvcc": ([
-          "-nvcc_options=relaxed-constexpr",
-          "-nvcc_options=ftz=true",
-      ]),
-      "@local_config_cuda//cuda:using_clang": ([
-          "-fcuda-flush-denormals-to-zero",
-      ]),
-  })
+load("@org_tensorflow//tensorflow:tensorflow.bzl", "tf_cc_binary", "tf_cc_test", "tf_py_wrap_cc")
+load("@org_tensorflow//tensorflow/core:platform/default/build_config.bzl", "tf_proto_library", "tf_proto_library_cc", "tf_proto_library_py")
 
 
 fold_cc_binary = tf_cc_binary
+fold_cc_test = tf_cc_test
 fold_cc_library = native.cc_library
+#fold_py_wrap_cc = tf_py_wrap_cc
 
 
-def fold_cc_test(linkopts=[], deps=[], **kwargs):
-  tf_cc_test(
-      linkopts = select({
-          clean_dep("//tensorflow:darwin"): [
-              "-undefined dynamic_lookup",
-          ],
-          "//conditions:default": [],
-      }),
-      deps=deps + ["//tensorflow_fold/util:test_main"],
-      **kwargs)
+def fold_py_binary(srcs_version="PY2AND3", **kwargs):
+  native.py_binary(srcs_version="PY2AND3", **kwargs)
 
 
-def fold_cuda_library(deps=[], cuda_deps=[], copts=[], **kwargs):
-  native.cc_library(
-      deps=deps + if_cuda(cuda_deps + [
-          "@local_config_cuda//cuda:cuda_headers",
-          "@org_tensorflow//tensorflow/core:cuda",
-          "@org_tensorflow//tensorflow/core:framework_lite",
-      ]),
-      copts=copts + _cuda_copts() + if_cuda(["-DGOOGLE_CUDA=1"]),
-      **kwargs)
+def fold_py_library(srcs_version="PY2AND3", **kwargs):
+  native.py_library(srcs_version="PY2AND3", **kwargs)
 
 
-def fold_cuda_cc_test(deps=[], cuda_deps=[], copts=[], tags=[], **kwargs):
-  native.cc_test(
-      deps=deps + ["//tensorflow_fold/util:test_main"],
-      copts=copts + if_cuda(["-DGOOGLE_CUDA=1"]),
-      tags = tags + ["manual"] + tf_cuda_tests_tags(),
-      **kwargs)
+def fold_py_test(srcs_version="PY2AND3", **kwargs):
+  native.py_test(srcs_version="PY2AND3", **kwargs)
 
 
-def fold_fake_cc_binary(*args, **kwargs):
-  # Not currently supported in open source version.
-  # Dummy rule that will make the BUILD file work.
-  pass
+def fold_py_extension(name, srcs=[], outs=[], deps=[]):
+  fold_cc_library(name = name + "_cc", srcs = srcs, deps = deps)
+  for out in outs:
+    fold_cc_binary(name=outs[0], srcs=[], linkshared=1, deps=[":" + name + "_cc"])
 
 
-def fold_py_nocompile_test(name, srcs=[], **kwargs):
-  # Not currently supported in open source version.
-  # Dummy rule that will make the BUILD file work.
-  native.py_test(name=name,
-                 srcs=srcs,
-                 deps=[],
-                 srcs_version="PY2AND3")
-
-
-def fold_proto_library(cc_name, py_name, srcs, cc_deps=[], py_deps=[],
-                       visibility=None, testonly=0):
+def fold_proto_library(cc_name, py_name, srcs, cc_deps=[], py_deps=[], visibility=None, testonly=0):
+#    tf_proto_library_cc(
+#        name = cc_name,
+#        srcs = srcs,
+#        protodeps = cc_deps,
+#        testonly = testonly,
+#        visibility = visibility,
+#    )
+#
+#    tf_proto_library_py(
+#        name = py_name,
+#        srcs = srcs,
+#        protodeps = py_deps,
+#        srcs_version = "PY2AND3",
+#        testonly = testonly,
+#        visibility = visibility,
+#    )
   cc_proto_library(name=cc_name,
                    srcs=srcs,
                    deps=cc_deps,
@@ -96,41 +65,12 @@ def fold_proto_library(cc_name, py_name, srcs, cc_deps=[], py_deps=[],
                    testonly=testonly)
 
 
-def fold_py_binary(name, srcs=[], deps=[], cc_deps=[], data=[]):
-  native.py_binary(name=name,
-                   srcs=srcs,
-                   deps=deps,
-                   data=data + [cc_dep + '.so' for cc_dep in cc_deps],
-                   srcs_version="PY2AND3")
+def fold_tf_op_py(name, srcs, cc_deps=[], py_deps=[]):
+  so_name = "_" + name + ".so"
+  fold_cc_binary(name=so_name, srcs = [], linkshared = 1, deps=cc_deps)
+  fold_py_library(name=name, srcs=srcs, data=[so_name], deps=py_deps)
 
 
-def fold_py_extension(name, srcs=[], outs=[], deps=[]):
-  native.cc_library(name = name + "_cc",
-                    srcs = srcs,
-                    deps = deps,
-                    alwayslink = 1)
-  for out in outs:
-    native.cc_binary(name=outs[0],
-                     srcs=[],
-                     linkshared=1,
-                     deps=[":" + name + "_cc"])
-
-
-def fold_py_library(name, srcs=[], deps=[], cc_deps=[], data=[], testonly=0):
-  native.py_library(name=name,
-                    srcs=srcs,
-                    deps=deps,
-                    data=data + [cc_dep + '.so' for cc_dep in cc_deps],
-                    testonly=testonly,
-                    srcs_version="PY2AND3")
-
-
-def fold_py_test(name, srcs=[], deps=[], cc_deps=[], data=[]):
-  native.py_test(name=name,
-                 srcs=srcs,
-                 deps=deps,
-                 data=data + [cc_dep + '.so' for cc_dep in cc_deps],
-                 srcs_version="PY2AND3")
 
 
 # Bazel rules for building swig files.
@@ -200,12 +140,11 @@ def fold_py_wrap_cc(name, srcs, swig_includes=[], deps=[], copts=[], **kwargs):
   # Convert a rule name such as foo/bar/baz to foo/bar/_baz.so
   # and use that as the name for the rule producing the .so file.
   cc_library_name = "/".join(name.split("/")[:-1] + ["_" + module_name + ".so"])
-  extra_deps = ["@local_config_python//:python_headers"]
   _fold_py_wrap_cc(
       name=name + "_py_wrap",
       srcs=srcs,
       swig_includes=swig_includes,
-      deps=deps + extra_deps,
+      deps=deps,
       module_name=module_name,
       py_module_name=name)
 
@@ -216,23 +155,11 @@ def fold_py_wrap_cc(name, srcs, swig_includes=[], deps=[], copts=[], **kwargs):
       linkopts=[],
       linkstatic=1,
       linkshared=1,
-      deps=deps + extra_deps)
+      deps=deps)
   native.py_library(name=name,
                     srcs=[":" + name + ".py"],
                     srcs_version="PY2AND3",
                     data=[":" + cc_library_name])
 
 
-def fold_tf_op_py(name, srcs, cc_deps=[], py_deps=[]):
-  so_name = "_" + name + ".so"
-  fold_cc_binary(
-      name=so_name,
-      srcs = [],
-      linkshared = 1,
-      linkstatic = 1,
-      deps=cc_deps)
-  fold_py_library(
-      name=name,
-      srcs=srcs,
-      data=[so_name],
-      deps=py_deps)
+

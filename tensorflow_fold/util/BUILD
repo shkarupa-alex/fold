@@ -62,7 +62,7 @@ fold_py_extension(
 fold_py_library(
     name = "proto",
     srcs = [],
-    cc_deps = [":proto_tools"],
+    data = [":proto_tools.so"],
 )
 
 fold_py_test(

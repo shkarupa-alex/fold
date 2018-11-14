@@ -18,10 +18,8 @@ build --define=LIBDIR=$(PREFIX)/lib
 build --define=INCLUDEDIR=$(PREFIX)/include
 
 # Custom options block
-build --define platform=external
 build --copt="-DGRPC_BAZEL_BUILD"
 build --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0"
 
-test --define platform=external
 test --copt="-DGRPC_BAZEL_BUILD"
 test --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0"
