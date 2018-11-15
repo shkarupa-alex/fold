@@ -133,7 +133,7 @@ def main(unused_argv):
 
     logits = tf.matmul(
         digits_vecs, final_layer_weights) + final_layer_biases
-    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
+    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(
         logits=logits, labels=labels))
     accuracy = tf.reduce_mean(
         tf.cast(tf.equal(tf.argmax(labels, 1),

@@ -138,7 +138,7 @@ class NonTerminalOp(loom.LoomOp):
       with tf.variable_scope(self._vscope):
         self._weights = tf.get_variable(
             "weights", [FLAGS.vector_size*2, FLAGS.vector_size],
-            initializer=tf.uniform_unit_scaling_initializer(1.43))
+            initializer=tf.initializers.variance_scaling(1.43, distribution="uniform"))
         self._bias = tf.get_variable("bias", [FLAGS.vector_size],
                                      initializer=tf.zeros_initializer())
     x = tf.concat([left, right], 1)
@@ -151,12 +151,12 @@ class NonTerminalOp(loom.LoomOp):
       with tf.variable_scope(self._vscope):
         self._weights_0 = tf.get_variable(
             "weights_0", [FLAGS.vector_size*2, FLAGS.vector_size],
-            initializer=tf.uniform_unit_scaling_initializer(1.43))
+            initializer=tf.initializers.variance_scaling(1.43, distribution="uniform"))
         self._bias_0 = tf.get_variable("bias_0", [FLAGS.vector_size],
                                        initializer=tf.zeros_initializer())
         self._weights = tf.get_variable(
             "weights", [FLAGS.vector_size, FLAGS.vector_size*4],
-            initializer=tf.uniform_unit_scaling_initializer(1.0))
+            initializer=tf.initializers.variance_scaling(1.0, distribution="uniform"))
         self._bias = tf.get_variable("bias", [FLAGS.vector_size*4],
                                      initializer=tf.zeros_initializer())
     # One hidden layer

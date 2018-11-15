@@ -1031,7 +1031,7 @@ that cell has an output type set (which it will if it is e.g. a
 `td.ScopedLayer` wrapping a tf rnn cell). For example:
 
 ```python
-cell = td.ScopedLayer(tf.contrib.rnn.GRUCell(num_units=16), 'mygru')
+cell = td.ScopedLayer(tf.nn.rnn_cell.GRUCell(num_units=16), 'mygru')
 model = td.Map(td.Vector(8)) >> td.RNN(gru_cell)
 ```
 
@@ -1723,7 +1723,7 @@ along with its variable scope, and passes the scope appropriately.
 For example:
 
 ```
-gru_cell1 = td.ScopedLayer(tf.contrib.rnn.GRUCell(num_units=16), 'gru1')
+gru_cell1 = td.ScopedLayer(tf.nn.rnn_cell.GRUCell(num_units=16), 'gru1')
 ... td.RNN(gru_cell1) ...
 ```
 - - -
@@ -1739,7 +1739,7 @@ Wrap a TensorFlow layer.
 *  <b>`layer_fn`</b>: A callable that accepts and returns nests of batched tensors. A
     nest of tensors is either a tensor or a sequence of nests of tensors.
     Must also accept a `scope` keyword argument. For example, may be an
-    instance of `tf.contrib.rnn.RNNCell`.
+    instance of `tf.nn.rnn_cell.RNNCell`.
 *  <b>`name_or_scope`</b>: A variable scope or a string to use as the scope name.
 
 

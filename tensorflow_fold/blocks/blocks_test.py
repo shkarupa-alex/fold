@@ -579,7 +579,7 @@ class BlocksTest(test_lib.TestCase):
     self.assertBuilds((-3., 3., 3.), block, -3)
 
   def test_all_of_different_shapes(self):
-    block = scalar_all_of(tf.negative, functools.partial(tf.expand_dims, dim=1))
+    block = scalar_all_of(tf.negative, functools.partial(tf.expand_dims, axis=1))
     self.assertBuilds((-3., [3.]), block, 3)
 
   def test_seq_of_tuple(self):
@@ -947,14 +947,14 @@ class BlocksTest(test_lib.TestCase):
     self.assertBuilds((31, {'foo': list(xrange(32))}), block, (range(32), -1))
 
   def test_rnn_with_cells(self):
-    gru_cell1 = tdl.ScopedLayer(tf.contrib.rnn.GRUCell(num_units=16), 'gru1')
-    gru_cell2 = tdl.ScopedLayer(tf.contrib.rnn.GRUCell(num_units=16), 'gru2')
+    gru_cell1 = tdl.ScopedLayer(tf.nn.rnn_cell.GRUCell(num_units=16), 'gru1')
+    gru_cell2 = tdl.ScopedLayer(tf.nn.rnn_cell.GRUCell(num_units=16), 'gru2')
 
     with tf.variable_scope('gru3') as vscope:
-      gru_cell3 = tdl.ScopedLayer(tf.contrib.rnn.GRUCell(num_units=16), vscope)
+      gru_cell3 = tdl.ScopedLayer(tf.nn.rnn_cell.GRUCell(num_units=16), vscope)
 
     lstm_cell = tdl.ScopedLayer(
-        tf.contrib.rnn.BasicLSTMCell(num_units=16), 'lstm')
+        tf.nn.rnn_cell.LSTMCell(num_units=16), 'lstm')
 
     gru1 = (tdb.InputTransform(lambda s: [ord(c) for c in s]) >>
             tdb.Map(tdb.Scalar('int32') >>
@@ -1034,9 +1034,9 @@ class BlocksTest(test_lib.TestCase):
 
   def test_hierarchical_rnn(self):
     char_cell = tdl.ScopedLayer(
-        tf.contrib.rnn.BasicLSTMCell(num_units=16), 'char_cell')
+        tf.nn.rnn_cell.LSTMCell(num_units=16), 'char_cell')
     word_cell = tdl.ScopedLayer(
-        tf.contrib.rnn.BasicLSTMCell(num_units=32), 'word_cell')
+        tf.nn.rnn_cell.LSTMCell(num_units=32), 'word_cell')
 
     char_lstm = (tdb.InputTransform(lambda s: [ord(c) for c in s]) >>
                  tdb.Map(tdb.Scalar('int32') >>
@@ -1119,14 +1119,14 @@ class BlocksTest(test_lib.TestCase):
         '<td.Fold \'x\' combine_block=<td.Function tf_fn=\'add\'> '
         'start_block=<td.FromTensor \'ones:0\'>>',
 
-        tdb.RNN(tdl.ScopedLayer(tf.contrib.rnn.GRUCell(num_units=8))):
+        tdb.RNN(tdl.ScopedLayer(tf.nn.rnn_cell.GRUCell(num_units=8))):
         '<td.RNN>',
-        tdb.RNN(tdl.ScopedLayer(tf.contrib.rnn.GRUCell(num_units=8)), name='x'):
+        tdb.RNN(tdl.ScopedLayer(tf.nn.rnn_cell.GRUCell(num_units=8)), name='x'):
         '<td.RNN \'x\'>',
-        tdb.RNN(tdl.ScopedLayer(tf.contrib.rnn.GRUCell(num_units=8)),
+        tdb.RNN(tdl.ScopedLayer(tf.nn.rnn_cell.GRUCell(num_units=8)),
                 initial_state=tf.ones(8)):
         '<td.RNN>',
-        tdb.RNN(tdl.ScopedLayer(tf.contrib.rnn.GRUCell(num_units=8)),
+        tdb.RNN(tdl.ScopedLayer(tf.nn.rnn_cell.GRUCell(num_units=8)),
                 initial_state=tf.ones(8), name='x'):
         '<td.RNN \'x\'>',
 

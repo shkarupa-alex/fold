@@ -18,15 +18,24 @@
 
 # Produces a file named sentences.csv
 cd /tmp/
-wget http://downloads.tatoeba.org/exports/sentences.tar.bz2 -O - | tar -xjf -
+wget https://downloads.tatoeba.org/exports/sentences.tar.bz2 -O - | tar -xjf -
+
+AWK_BIN=awk
+SHUF_BIN=shuf
+
+if [[ $(uname) == "Darwin" ]]; then
+  AWK_BIN=gawk
+  SHUF_BIN=gshuf
+fi
+
 
 # Keep only the sentences in the eight languages listed whose sentences are
 # made entirely from lower case a-z letters.
-awk -F"\t" '$2 ~ /(deu|eng|epo|fra|ita|nld|por|spa)/ && $3 ~ /^[\x00-\x80]+$/' < sentences.csv \
-  | tr -d '[:punct:]' | tr '[:upper:]' '[:lower:]' | shuf \
+$AWK_BIN -F"\t" '$2 ~ /(deu|eng|epo|fra|ita|nld|por|spa)/ && $3 ~ /^[\x00-\x80]+$/' < sentences.csv \
+  | tr -d '[:punct:]' | tr '[:upper:]' '[:lower:]' | $SHUF_BIN \
 > roman_sentences.csv
 
 # Do an 20/80 dev/train split deteriministically by the last digit of the
 # sentence ID number.
-awk -F"\t" '$1 ~ /(1|2)\y/ {print $2","$3}' < roman_sentences.csv > roman_sentences_dev.csv
-awk -F"\t" '$1 !~ /(1|2)\y/ {print $2","$3}' < roman_sentences.csv > roman_sentences_train.csv
+$AWK_BIN -F"\t" '$1 ~ /(1|2)\y/ {print $2","$3}' < roman_sentences.csv > roman_sentences_dev.csv
+$AWK_BIN -F"\t" '$1 !~ /(1|2)\y/ {print $2","$3}' < roman_sentences.csv > roman_sentences_train.csv

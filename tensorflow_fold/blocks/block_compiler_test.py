@@ -178,7 +178,7 @@ class InitUninitializedTest(test_lib.TestCase):
   def test_all_initialized(self):
     with self.test_session() as sess:
       x = tf.Variable(tf.zeros([]))
-      sess.run(tf.initialize_variables([x]))
+      sess.run(tf.variables_initializer([x]))
       self.assertEqual([], tdc._init_uninitialized(sess))
 
   def test_some_initialized(self):

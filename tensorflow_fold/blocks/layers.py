@@ -266,11 +266,11 @@ class FC(TensorToTensorLayer):
       # TODO(SamEisenstat): This constant is calibrated for ReLU, something else
       # might be better for ReLU6.
       if activation in [tf.nn.relu, tf.nn.relu6]:
-        initializer = tf.uniform_unit_scaling_initializer(1.43)
+        initializer = tf.initializers.variance_scaling(1.43, distribution="uniform")
       elif activation == tf.tanh:
-        initializer = tf.uniform_unit_scaling_initializer(1.15)
+        initializer = tf.initializers.variance_scaling(1.15, distribution="uniform")
       elif not activation:
-        initializer = tf.uniform_unit_scaling_initializer(1.0)
+        initializer = tf.initializers.variance_scaling(1.0, distribution="uniform")
       else:
         initializer = tf.truncated_normal_initializer(stddev=0.01)
     self._activation = activation
@@ -388,7 +388,7 @@ class Embedding(TensorToTensorLayer):
     self._weights_shape = (num_buckets, num_units_out)
     if name is None: name = 'Embedding_%d_%d' % self._weights_shape
     if initializer is None:
-      initializer = tf.uniform_unit_scaling_initializer(1.0)
+      initializer = tf.initializers.variance_scaling(1.0, distribution="uniform")
     elif isinstance(initializer, np.ndarray):
       initializer = tf.convert_to_tensor(initializer)
     if isinstance(initializer, tf.Tensor):
@@ -602,7 +602,7 @@ class ScopedLayer(Layer):
   For example:
 
   ```
-  gru_cell1 = td.ScopedLayer(tf.contrib.rnn.GRUCell(num_units=16), 'gru1')
+  gru_cell1 = td.ScopedLayer(tf.nn.rnn_cell.GRUCell(num_units=16), 'gru1')
   ... td.RNN(gru_cell1) ...
   ```
   """
@@ -614,7 +614,7 @@ class ScopedLayer(Layer):
       layer_fn: A callable that accepts and returns nests of batched tensors. A
         nest of tensors is either a tensor or a sequence of nests of tensors.
         Must also accept a `scope` keyword argument. For example, may be an
-        instance of `tf.contrib.rnn.RNNCell`.
+        instance of `tf.nn.rnn_cell.RNNCell`.
       name_or_scope: A variable scope or a string to use as the scope name.
     """
     self.set_constructor_args('td.ScopedLayer',
@@ -628,7 +628,7 @@ class ScopedLayer(Layer):
         name_or_scope = layer_fn.func.__name__
     super(ScopedLayer, self).__init__(name_or_scope=name_or_scope)
     self._layer_fn = layer_fn
-    if isinstance(layer_fn, tf.contrib.rnn.RNNCell):
+    if isinstance(layer_fn, tf.nn.rnn_cell.RNNCell):
       self.set_output_type((layer_fn.output_size, layer_fn.state_size))
 
   @property

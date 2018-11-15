@@ -528,7 +528,7 @@ class Plan(object):
     self._finalized = False
     self._loss_total = None
     self._summaries = None
-    self._global_step = tf.contrib.framework.get_or_create_global_step()
+    self._global_step = tf.train.get_or_create_global_step()
     self._best_loss = None
     self._batch_size_ph = None
 

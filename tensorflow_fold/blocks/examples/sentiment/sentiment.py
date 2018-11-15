@@ -81,7 +81,7 @@ def create_embedding(weight_matrix):
 def create_model(word_embedding, word_idx, lstm_num_units, keep_prob=1):
   """Creates a sentiment model. Returns (compiler, mean metrics)."""
   tree_lstm = td.ScopedLayer(
-      tf.contrib.rnn.DropoutWrapper(
+      tf.nn.rnn_cell.DropoutWrapper(
           BinaryTreeLSTMCell(lstm_num_units, keep_prob=keep_prob),
           input_keep_prob=keep_prob, output_keep_prob=keep_prob),
       name_or_scope='tree_lstm')
@@ -184,7 +184,7 @@ def tf_binary_hits(logits, y_):
   return tf.cast(tf.equal(binary_y, binary_y_), tf.float64)
 
 
-class BinaryTreeLSTMCell(tf.contrib.rnn.BasicLSTMCell):
+class BinaryTreeLSTMCell(tf.nn.rnn_cell.LSTMCell):
   """LSTM with two state inputs.
 
   This is the model described in section 3.2 of 'Improved Semantic
@@ -210,7 +210,7 @@ class BinaryTreeLSTMCell(tf.contrib.rnn.BasicLSTMCell):
     self._keep_prob = keep_prob
     self._seed = seed
 
-  def __call__(self, inputs, state, scope=None):
+  def __call__(self, inputs, state, scope=None, *args, **kwargs):
     with tf.variable_scope(scope or type(self).__name__):
       lhs, rhs = state
       c0, h0 = lhs
@@ -230,6 +230,6 @@ class BinaryTreeLSTMCell(tf.contrib.rnn.BasicLSTMCell):
                tf.sigmoid(i) * j)
       new_h = self._activation(new_c) * tf.sigmoid(o)
 
-      new_state = tf.contrib.rnn.LSTMStateTuple(new_c, new_h)
+      new_state = tf.nn.rnn_cell.LSTMStateTuple(new_c, new_h)
 
       return new_h, new_state

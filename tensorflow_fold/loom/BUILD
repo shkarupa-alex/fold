@@ -69,8 +69,8 @@ fold_cc_test(
 )
 
 fold_py_wrap_cc(
-    name = "pywrapweaver",
-    srcs = ["python/weaver.swig"],
+    name = "pywraptf_weaver",
+    srcs = ["python/weaver.i"],
     deps = [
         ":platform",
         ":weaver",
@@ -126,7 +126,7 @@ fold_py_library(
     deps = [
         ":deserializing_weaver_op",
         ":loom_py_pb2",
-        ":pywrapweaver",
+        ":pywraptf_weaver",
         "@org_tensorflow//tensorflow:tensorflow_py",
     ],
 )

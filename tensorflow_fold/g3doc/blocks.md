@@ -51,8 +51,8 @@ easy to do in Fold, but hard to do in TensorFlow:
 
 ```python
 # Create RNN cells using the TensorFlow RNN library
-char_cell = td.ScopedLayer(tf.contrib.rnn.BasicLSTMCell(num_units=16), 'char_cell')
-word_cell = td.ScopedLayer(tf.contrib.rnn.BasicLSTMCell(num_units=32), 'word_cell')
+char_cell = td.ScopedLayer(tf.nn.rnn_cell.LSTMCell(num_units=16), 'char_cell')
+word_cell = td.ScopedLayer(tf.nn.rnn_cell.LSTMCell(num_units=32), 'word_cell')
 
 # character LSTM converts a string to a word vector
 char_lstm = (td.InputTransform(lambda s: [ord(c) for c in s]) >>

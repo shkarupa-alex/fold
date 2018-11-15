@@ -43,7 +43,6 @@ import tensorflow as tf
 import tensorflow_fold.blocks.examples.plan as pl
 import tensorflow_fold.public.blocks as td
 
-
 NUM_LABELS = 10
 INPUT_LENGTH = 784  # 28 x 28
 

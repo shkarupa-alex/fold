@@ -1,7 +1,5 @@
 workspace(name = "org_tensorflow_fold")
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
 
 # To update TensorFlow to a new revision.
 # 1. Update the TENSORFLOW_GIT_COMMIT args below to include the new git hash.
@@ -39,10 +37,9 @@ http_archive(
 
 # Specify the minimum required bazel version.
 load("@org_tensorflow//tensorflow:version_check.bzl", "check_bazel_version_at_least")
-
 check_bazel_version_at_least("0.15.0")
 
 
 # Import all of the tensorflow dependencies.
-load('//tensorflow_fold:workspace.bzl', 'tf_fold_workspace')
-tf_fold_workspace()
+load('@org_tensorflow//tensorflow:workspace.bzl', 'tf_workspace')
+tf_workspace(tf_repo_name = "org_tensorflow")

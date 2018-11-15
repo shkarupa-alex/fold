@@ -35,7 +35,7 @@ import tensorflow as tf
 
 from tensorflow_fold.loom import deserializing_weaver_op
 from tensorflow_fold.loom import loom_pb2
-from tensorflow_fold.loom import pywrapweaver
+from tensorflow_fold.loom import pywraptf_weaver
 
 
 TENSOR_IDX_T = tf.int32
@@ -831,7 +831,7 @@ class Weaver(object):
       raise TypeError('A weaver must be passed a Loom on construction.')
     self._loom = loom
 
-    self._weaver = pywrapweaver.Weaver(self._loom._loom_metadata_str)
+    self._weaver = pywraptf_weaver.Weaver(self._loom._loom_metadata_str)
     if self._weaver.error_string():
       raise AssertionError('Failed to create weaver: ',
                            self._weaver.error_string())

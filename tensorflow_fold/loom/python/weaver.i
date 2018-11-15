@@ -1,4 +1,3 @@
-
 %{
 #include <vector>
 #include "tensorflow_fold/loom/weaver.h"

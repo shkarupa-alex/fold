@@ -96,7 +96,7 @@ class CalculatorModel(object):
     # compute losses in the usual way.
     (logits, labels) = self._compiler.output_tensors
 
-    self._loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
+    self._loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(
         logits=logits, labels=labels))
 
     self._accuracy = tf.reduce_mean(

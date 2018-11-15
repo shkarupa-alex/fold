@@ -280,25 +280,25 @@ PyObject* MapProtoSourceTreePath(PyObject *self, PyObject *args) {
     // PyArg_ParseTuple already sets an error for us.
     return nullptr;
   }
-  LOG(INFO) << "Mapping Vitual Path '" << virtual_path
-            << "' to disk_path '" << disk_path << "'";
+  LOG(INFO) << "Mapping vitual path '" << virtual_path
+            << "' to disk path '" << disk_path << "'";
   SingletonPrototypeFactory()->MapPath(virtual_path, disk_path);
-  LOG(INFO) << "DONE Mapping Vitual Path '" << virtual_path
-            << "' to disk_path '" << disk_path << "'";
+  LOG(INFO) << "Done mapping vitual path '" << virtual_path
+            << "' to disk path '" << disk_path << "'";
   return Py_None;
 }
 
 PyObject* ImportProtoFile(PyObject *self, PyObject *args) {
   const char *filename;
-  LOG(INFO) << "Importing Proto file: about to parse args.";
+  LOG(INFO) << "Importing proto file: about to parse args.";
 
   if (!PyArg_ParseTuple(args, "s", &filename)) {
     // PyArg_ParseTuple already sets an error for us.
     return nullptr;
   }
-  LOG(INFO) << "Importing Proto file " << filename;
+  LOG(INFO) << "Importing proto file " << filename;
   SingletonPrototypeFactory()->Import(filename);
-  LOG(INFO) << "Done Importing Proto file " << filename;
+  LOG(INFO) << "Done importing proto file " << filename;
   return Py_None;
 }
 

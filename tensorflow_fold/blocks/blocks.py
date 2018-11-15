@@ -1405,7 +1405,7 @@ def RNN(cell, initial_state=None,             # pylint: disable=invalid-name
   `td.ScopedLayer` wrapping a tf rnn cell). For example:
 
   ```python
-  cell = td.ScopedLayer(tf.contrib.rnn.GRUCell(num_units=16), 'mygru')
+  cell = td.ScopedLayer(tf.nn.rnn_cell.GRUCell(num_units=16), 'mygru')
   model = td.Map(td.Vector(8)) >> td.RNN(gru_cell)
   ```
 

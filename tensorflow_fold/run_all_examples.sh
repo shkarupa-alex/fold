@@ -62,4 +62,4 @@ if [[ ! -f /tmp/roman_sentences.csv ]]; then
   ./tensorflow_fold/blocks/examples/language_id/fetch_datasets.sh
 fi
 ./bazel-bin/tensorflow_fold/blocks/examples/language_id/language_id \
-  --logdir_base="${TMP}" --epochs=2 --alsologtostderr
+  --logdir_base="${TMP}" --epochs=1 --alsologtostderr
