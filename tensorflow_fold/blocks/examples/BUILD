@@ -9,9 +9,7 @@ package(
     ],
 )
 
-load("//tensorflow_fold:fold.bzl", "fold_py_binary")
-
-fold_py_binary(
+py_binary(
     name = "plan",
     srcs = ["plan.py"],
     deps = [

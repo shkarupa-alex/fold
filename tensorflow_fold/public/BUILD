@@ -1,14 +1,12 @@
 licenses(["notice"])  # Apache 2.0
 
-load("//tensorflow_fold:fold.bzl", "fold_cc_library", "fold_py_library")
-
 package(
     default_visibility = [
         "//visibility:public",
     ],
 )
 
-fold_py_library(
+py_library(
     name = "loom",
     srcs = ["loom.py"],
     deps = [
@@ -16,7 +14,7 @@ fold_py_library(
     ],
 )
 
-fold_cc_library(
+cc_library(
     name = "loom_cc",
     hdrs = ["loom.h"],
     deps = [
@@ -26,7 +24,7 @@ fold_cc_library(
     ],
 )
 
-fold_py_library(
+py_library(
     name = "blocks",
     srcs = ["blocks.py"],
     deps = [

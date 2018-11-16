@@ -1,13 +1,6 @@
 licenses(["notice"])  # Apache 2.0
 
-load(
-    "//tensorflow_fold:fold.bzl",
-    "fold_cc_library",
-    "fold_proto_library",
-    "fold_py_extension",
-    "fold_py_library",
-    "fold_py_test",
-)
+load("//tensorflow_fold:fold.bzl", "fold_proto_library")
 
 package(
     default_visibility = [
@@ -16,15 +9,14 @@ package(
 )
 
 fold_proto_library(
+    name = "test_proto",
     srcs = ["test.proto"],
-    cc_name = "test_proto",
-    py_name = "test_py_pb2",
+    visibility = ["//tensorflow_fold:__subpackages__"],
 )
 
 fold_proto_library(
+    name = "test3_proto",
     srcs = ["test3.proto"],
-    cc_name = "test3_proto",
-    py_name = "test3_py_pb2",
 )
 
 filegroup(
@@ -36,7 +28,7 @@ filegroup(
 )
 
 # main() for C++ tests
-fold_cc_library(
+cc_library(
     name = "test_main",
     testonly = 1,
     srcs = ["test_main.cc"],
@@ -48,10 +40,9 @@ fold_cc_library(
     ],
 )
 
-fold_py_extension(
-    name = "proto_tools",
-    srcs = ["proto_tools.cc"],
-    outs = ["proto_tools.so"],
+cc_library(
+    name="proto_tools_cc",
+    srcs=["proto_tools.cc"],
     deps = [
         "@org_tensorflow//tensorflow/core:framework_headers_lib",
         "@local_config_python//:python_headers",
@@ -59,13 +50,20 @@ fold_py_extension(
     ],
 )
 
-fold_py_library(
+cc_binary(
+    name = "proto_tools.so",
+    srcs = [],
+    deps=[":proto_tools_cc"],
+    linkshared = 1,
+)
+
+py_library(
     name = "proto",
     srcs = [],
     data = [":proto_tools.so"],
 )
 
-fold_py_test(
+py_test(
     name = "proto_test",
     srcs = ["proto_test.py"],
     data = [
@@ -74,18 +72,18 @@ fold_py_test(
     ],
     deps = [
         ":proto",
-        ":test3_py_pb2",
-        ":test_py_pb2",
+        ":test_proto_py",
+        ":test3_proto_py",
         "@org_tensorflow//tensorflow:tensorflow_py",
     ],
 )
 
-fold_py_library(
+py_library(
     name = "cpp_test_proto_lib",
     srcs = [],
     deps = [
-        ":test3_py_pb2",
-        ":test_py_pb2",
+        ":test_proto_py",
+        ":test3_proto_py",
     ],
 )
 

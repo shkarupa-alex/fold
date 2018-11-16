@@ -2,9 +2,7 @@
 
 licenses(["notice"])  # Apache 2.0
 
-load("//tensorflow_fold:fold.bzl", "fold_py_binary")
-
-fold_py_binary(
+py_binary(
     name = "fizzbuzz",
     srcs = ["fizzbuzz.py"],
     deps = [

@@ -2,14 +2,7 @@
 
 licenses(["notice"])  # Apache 2.0
 
-load(
-    "//tensorflow_fold:fold.bzl",
-    "fold_proto_library",
-    "fold_py_binary",
-    "fold_py_extension",
-    "fold_py_library",
-    "fold_py_test",
-)
+load("//tensorflow_fold:fold.bzl", "fold_proto_library")
 
 package(
     default_visibility = [
@@ -18,9 +11,9 @@ package(
 )
 
 fold_proto_library(
+    name = "calculator_proto",
     srcs = ["calculator.proto"],
-    cc_name = "calculator_proto",
-    py_name = "calculator_py_pb2",
+    visibility = ["//tensorflow_fold:__subpackages__"],
 )
 
 filegroup(
@@ -28,34 +21,27 @@ filegroup(
     srcs = ["calculator.proto"],
 )
 
-fold_py_extension(
-    name = "cpp_calculator_proto",
-    srcs = [],
-    outs = [],
-    deps = [":calculator_proto"],
-)
-
-fold_py_library(
+py_library(
     name = "calculator",
     srcs = ["calculator.py"],
     deps = [
-        ":calculator_py_pb2",
+        ":calculator_proto_py",
     ],
 )
 
-fold_py_test(
+py_test(
     name = "calculator_test",
     srcs = ["calculator_test.py"],
     deps = [
         ":calculator",
-        ":calculator_py_pb2",
+        ":calculator_proto_py",
         "@protobuf_archive//:protobuf_python",
         "@six_archive//:six",
         "@org_tensorflow//tensorflow:tensorflow_py",
     ],
 )
 
-fold_py_binary(
+py_binary(
     name = "make_dataset",
     srcs = ["make_dataset.py"],
     deps = [
@@ -65,12 +51,12 @@ fold_py_binary(
     ],
 )
 
-fold_py_library(
+py_library(
     name = "model",
     srcs = ["model.py"],
     deps = [
         ":calculator",
-        ":calculator_py_pb2",
+        ":calculator_proto_py",
         # numpy",
         "@six_archive//:six",
         "@org_tensorflow//tensorflow:tensorflow_py",
@@ -78,7 +64,7 @@ fold_py_library(
     ],
 )
 
-fold_py_test(
+py_test(
     name = "model_test",
     srcs = ["model_test.py"],
     deps = [
@@ -89,7 +75,7 @@ fold_py_test(
     ],
 )
 
-fold_py_library(
+py_library(
     name = "helpers",
     srcs = ["helpers.py"],
     deps = [
@@ -98,11 +84,11 @@ fold_py_library(
     ],
 )
 
-fold_py_binary(
+py_binary(
     name = "train",
     srcs = ["train.py"],
     deps = [
-        ":calculator_py_pb2",
+        ":calculator_proto_py",
         ":helpers",
         ":model",
         "@six_archive//:six",
@@ -110,11 +96,11 @@ fold_py_binary(
     ],
 )
 
-fold_py_binary(
+py_binary(
     name = "eval",
     srcs = ["eval.py"],
     deps = [
-        ":calculator_py_pb2",
+        ":calculator_proto_py",
         ":helpers",
         ":model",
         "@org_tensorflow//tensorflow:tensorflow_py",

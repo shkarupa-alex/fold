@@ -7,16 +7,8 @@
 
 licenses(["notice"])  # Apache 2.0
 
-load(
-    "//tensorflow_fold:fold.bzl",
-    "fold_cc_library",
-    "fold_cc_test",
-    "fold_proto_library",
-    "fold_py_library",
-    "fold_py_test",
-    "fold_py_wrap_cc",
-    "fold_tf_op_py",
-)
+load("@org_tensorflow//tensorflow:tensorflow.bzl", "tf_py_wrap_cc", "tf_cc_test")
+load("//tensorflow_fold:fold.bzl", "fold_proto_library")
 
 package(
     default_visibility = [
@@ -25,18 +17,17 @@ package(
 )
 
 fold_proto_library(
+    name = "loom_proto",
     srcs = ["loom.proto"],
     cc_deps = [
         "@org_tensorflow//tensorflow/core:protos_all_cc",
     ],
-    cc_name = "loom_proto",
-    py_deps = [
-        "@org_tensorflow//tensorflow/core:protos_all_py",
-    ],
-    py_name = "loom_py_pb2",
+    protodeps = [
+        "@org_tensorflow//tensorflow/core:protos_all",
+    ]
 )
 
-fold_cc_library(
+cc_library(
     name = "platform",
     hdrs = ["platform.h"],
     deps = [
@@ -44,12 +35,12 @@ fold_cc_library(
     ],
 )
 
-fold_cc_library(
+cc_library(
     name = "weaver",
     srcs = ["weaver.cc"],
     hdrs = ["weaver.h"],
     deps = [
-        ":loom_proto",
+        ":loom_proto_cc",
         ":platform",
         "@org_tensorflow//third_party/eigen3",
         "@org_tensorflow//tensorflow/core:framework_headers_lib",
@@ -57,18 +48,18 @@ fold_cc_library(
     ],
 )
 
-fold_cc_test(
+tf_cc_test(
     name = "weaver_test",
     srcs = ["weaver_test.cc"],
     deps = [
-        ":loom_proto",
+        ":loom_proto_cc",
         ":weaver",
         "//tensorflow_fold/util:test_main",
         "@org_tensorflow//tensorflow/core:protos_all_cc",
     ],
 )
 
-fold_py_wrap_cc(
+tf_py_wrap_cc(
     name = "pywraptf_weaver",
     srcs = ["python/weaver.i"],
     deps = [
@@ -78,7 +69,7 @@ fold_py_wrap_cc(
     ],
 )
 
-fold_cc_library(
+cc_library(
     name = "weaver_op_base",
     srcs = ["weaver_op_base.cc"],
     hdrs = ["weaver_op_base.h"],
@@ -88,7 +79,7 @@ fold_cc_library(
     ],
 )
 
-fold_py_library(
+py_library(
     name = "weaver_op_base_py",
     srcs = ["weaver_op_base.py"],
     deps = [
@@ -96,10 +87,9 @@ fold_py_library(
     ],
 )
 
-#  The following two BUILD rules are an example of how you would use
+#  The following three BUILD rules are an example of how you would use
 #  weaver_op_base to define an op.
-
-fold_cc_library(
+cc_library(
     name = "deserializing_weaver_op_cc",
     srcs = ["deserializing_weaver_op.cc"],
     deps = [
@@ -110,28 +100,36 @@ fold_cc_library(
     alwayslink = 1,
 )
 
-fold_tf_op_py(
-    name = "deserializing_weaver_op",
-    srcs = ["deserializing_weaver_op.py"],
-    cc_deps = [":deserializing_weaver_op_cc"],
-    py_deps = [
-        ":weaver_op_base_py",
-        "@org_tensorflow//tensorflow:tensorflow_py",
-    ],
+cc_binary(
+    name="_deserializing_weaver_op.so",
+    srcs = [],
+    deps = [":deserializing_weaver_op_cc"],
+    linkshared = 1,
 )
 
-fold_py_library(
+py_library(
+    name="deserializing_weaver_op",
+    srcs = ["deserializing_weaver_op.py"],
+    data = [":_deserializing_weaver_op.so"],
+    deps = [
+        ":weaver_op_base_py",
+        "@org_tensorflow//tensorflow:tensorflow_py",
+    ]
+)
+
+
+py_library(
     name = "loom",
     srcs = ["loom.py"],
     deps = [
         ":deserializing_weaver_op",
-        ":loom_py_pb2",
+        ":loom_proto_py",
         ":pywraptf_weaver",
         "@org_tensorflow//tensorflow:tensorflow_py",
     ],
 )
 
-fold_py_test(
+py_test(
     name = "loom_test",
     srcs = ["loom_test.py"],
     deps = [

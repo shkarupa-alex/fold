@@ -3,8 +3,6 @@
 
 licenses(["notice"])  # Apache 2.0
 
-load("//tensorflow_fold:fold.bzl", "fold_py_library", "fold_py_test")
-
 package(
     default_visibility = [
         "//tensorflow_fold/blocks/examples:__subpackages__",
@@ -12,7 +10,7 @@ package(
     ],
 )
 
-fold_py_library(
+py_library(
     name = "blocks",
     srcs = [
         "block_compiler.py",
@@ -34,7 +32,7 @@ fold_py_library(
     ],
 )
 
-fold_py_library(
+py_library(
     name = "test_lib",
     testonly = 1,
     srcs = [
@@ -49,7 +47,7 @@ fold_py_library(
     ],
 )
 
-fold_py_test(
+py_test(
     name = "blocks_test",
     srcs = ["blocks_test.py"],
     data = [
@@ -60,11 +58,11 @@ fold_py_test(
         ":test_lib",
         "@org_tensorflow//tensorflow:tensorflow_py",
         "//tensorflow_fold/util:cpp_test_proto_lib",
-        "//tensorflow_fold/util:test_py_pb2",
+        "//tensorflow_fold/util:test_proto_py",
     ],
 )
 
-fold_py_test(
+py_test(
     name = "block_compiler_test",
     srcs = ["block_compiler_test.py"],
     deps = [
@@ -74,7 +72,7 @@ fold_py_test(
     ],
 )
 
-fold_py_test(
+py_test(
     name = "layers_test",
     srcs = ["layers_test.py"],
     deps = [
@@ -84,7 +82,7 @@ fold_py_test(
     ],
 )
 
-fold_py_test(
+py_test(
     name = "metrics_test",
     srcs = ["metrics_test.py"],
     deps = [
@@ -94,7 +92,7 @@ fold_py_test(
     ],
 )
 
-fold_py_library(
+py_library(
     name = "result_types",
     srcs = ["result_types.py"],
     deps = [
@@ -105,7 +103,7 @@ fold_py_library(
     ],
 )
 
-fold_py_test(
+py_test(
     name = "result_types_test",
     srcs = ["result_types_test.py"],
     deps = [
@@ -115,7 +113,7 @@ fold_py_test(
     ],
 )
 
-fold_py_library(
+py_library(
     name = "util",
     srcs = ["util.py"],
     deps = [
@@ -123,7 +121,7 @@ fold_py_library(
     ],
 )
 
-fold_py_test(
+py_test(
     name = "util_test",
     srcs = ["util_test.py"],
     deps = [
@@ -133,7 +131,7 @@ fold_py_test(
     ],
 )
 
-fold_py_library(
+py_library(
     name = "plan",
     srcs = ["plan.py"],
     deps = [
@@ -144,7 +142,7 @@ fold_py_library(
     ],
 )
 
-fold_py_test(
+py_test(
     name = "plan_test",
     srcs = ["plan_test.py"],
     deps = [
