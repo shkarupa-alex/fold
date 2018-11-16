@@ -1,13 +1,6 @@
-# Description:
 # Example models using blocks.
-
 licenses(["notice"])  # Apache 2.0
-
-package(
-    default_visibility = [
-        "//tensorflow_fold/blocks/examples:__subpackages__",
-    ],
-)
+package(default_visibility = ["//tensorflow_fold/blocks/examples:__subpackages__"])
 
 py_binary(
     name = "plan",

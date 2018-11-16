@@ -1,20 +1,15 @@
 licenses(["notice"])  # Apache 2.0
+package(default_visibility = ["//visibility:public"])
 
-load("//tensorflow_fold:fold.bzl", "fold_proto_library")
+load("@org_tensorflow//tensorflow/core:platform/default/build_config.bzl", "tf_proto_library")
 
-package(
-    default_visibility = [
-        "//visibility:public",
-    ],
-)
-
-fold_proto_library(
+tf_proto_library(
     name = "test_proto",
     srcs = ["test.proto"],
     visibility = ["//tensorflow_fold:__subpackages__"],
 )
 
-fold_proto_library(
+tf_proto_library(
     name = "test3_proto",
     srcs = ["test3.proto"],
 )
@@ -27,7 +22,6 @@ filegroup(
     ],
 )
 
-# main() for C++ tests
 cc_library(
     name = "test_main",
     testonly = 1,

@@ -4,17 +4,11 @@
 # sparse variants of GridLSTM and arbitrary architectures containing multiple
 # LSTMs of example-dependant depth.  Loom is implemented as a library on
 # top of TensorFlow.
-
 licenses(["notice"])  # Apache 2.0
+package(default_visibility = ["//tensorflow_fold:__subpackages__"])
 
 load("@org_tensorflow//tensorflow:tensorflow.bzl", "tf_py_wrap_cc", "tf_cc_test")
 load("//tensorflow_fold:fold.bzl", "fold_proto_library")
-
-package(
-    default_visibility = [
-        "//tensorflow_fold/public:__subpackages__",
-    ],
-)
 
 fold_proto_library(
     name = "loom_proto",

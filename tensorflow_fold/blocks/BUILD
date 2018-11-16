@@ -1,14 +1,10 @@
 # TensorFlow Fold is a high-level library for constructing models that is built
 # on top of TensorLoom.
-
 licenses(["notice"])  # Apache 2.0
-
-package(
-    default_visibility = [
-        "//tensorflow_fold/blocks/examples:__subpackages__",
-        "//tensorflow_fold/public:__subpackages__",
-    ],
-)
+package(default_visibility = [
+  "//tensorflow_fold/blocks/examples:__subpackages__",
+  "//tensorflow_fold/public:__subpackages__",
+])
 
 py_library(
     name = "blocks",

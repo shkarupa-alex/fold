@@ -1,16 +1,10 @@
 # Tree RNN smoke test (learn a calculator.)
-
 licenses(["notice"])  # Apache 2.0
+package(default_visibility = ["//tensorflow_fold:__subpackages__"])
 
-load("//tensorflow_fold:fold.bzl", "fold_proto_library")
+load("@org_tensorflow//tensorflow/core:platform/default/build_config.bzl", "tf_proto_library")
 
-package(
-    default_visibility = [
-        "//tensorflow_fold:__subpackages__",
-    ],
-)
-
-fold_proto_library(
+tf_proto_library(
     name = "calculator_proto",
     srcs = ["calculator.proto"],
     visibility = ["//tensorflow_fold:__subpackages__"],
