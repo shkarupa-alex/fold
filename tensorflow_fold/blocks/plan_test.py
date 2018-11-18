@@ -19,6 +19,7 @@ import os
 import shutil
 # import google3
 import six
+import sys
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 from tensorflow_fold.blocks import block_compiler
@@ -830,8 +831,9 @@ class TfNthTest(test_lib.TestCase):
       n = tf.placeholder(tf.int64, [])
       self.assertEqual(42, sess.run(plan._tf_nth([lambda: tf.constant(42)], n),
                                     {n: 0}))
-      self.assertRaises(tf.errors.InvalidArgumentError, sess.run,
-                        plan._tf_nth([lambda: tf.constant(42)], n), {n: 7})
+      with self.captureWritesToStream(sys.stderr):
+        self.assertRaises(tf.errors.InvalidArgumentError, sess.run,
+                          plan._tf_nth([lambda: tf.constant(42)], n), {n: 7})
 
   def test_n_fns(self):
     with self.test_session() as sess:
@@ -839,7 +841,8 @@ class TfNthTest(test_lib.TestCase):
       nth = plan._tf_nth([lambda j=i: tf.constant(j) for i in xrange(4)], n)
       for idx in xrange(4):
         self.assertEqual(idx, sess.run(nth, {n: idx}))
-      self.assertRaises(tf.errors.InvalidArgumentError, sess.run, nth, {n: -1})
+      with self.captureWritesToStream(sys.stderr):
+        self.assertRaises(tf.errors.InvalidArgumentError, sess.run, nth, {n: -1})
 
 
 def _setup_plan(**kwargs):

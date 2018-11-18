@@ -7,6 +7,7 @@
 licenses(["notice"])  # Apache 2.0
 package(default_visibility = ["//tensorflow_fold:__subpackages__"])
 
+load("@org_tensorflow//tensorflow/core:platform/default/build_config.bzl", "tf_proto_library")
 load("@org_tensorflow//tensorflow:tensorflow.bzl", "tf_py_wrap_cc", "tf_cc_test")
 load("//tensorflow_fold:fold.bzl", "fold_proto_library")
 
@@ -20,6 +21,18 @@ fold_proto_library(
         "@org_tensorflow//tensorflow/core:protos_all",
     ]
 )
+#tf_proto_library(
+#    name = "loom_proto",
+#    srcs = ["loom.proto"],
+#    protodeps = [
+#        "@org_tensorflow//tensorflow/core:protos_all",
+#    ]
+#)
+#cc_library(
+#    name = "mylib",
+#    srcs = ["mylib.so"],
+#    hdrs = ["mylib.h"],
+#)
 
 cc_library(
     name = "platform",
@@ -37,8 +50,6 @@ cc_library(
         ":loom_proto_cc",
         ":platform",
         "@org_tensorflow//third_party/eigen3",
-        "@org_tensorflow//tensorflow/core:framework_headers_lib",
-        "@org_tensorflow//tensorflow/core:protos_all_cc",
     ],
 )
 
@@ -46,10 +57,9 @@ tf_cc_test(
     name = "weaver_test",
     srcs = ["weaver_test.cc"],
     deps = [
-        ":loom_proto_cc",
         ":weaver",
+#        ":loom_proto_cc",
         "//tensorflow_fold/util:test_main",
-        "@org_tensorflow//tensorflow/core:protos_all_cc",
     ],
 )
 
@@ -57,8 +67,8 @@ tf_py_wrap_cc(
     name = "pywraptf_weaver",
     srcs = ["python/weaver.i"],
     deps = [
-        ":platform",
         ":weaver",
+#        ":loom_proto_cc",
         "@local_config_python//:python_headers",
     ],
 )
@@ -69,7 +79,6 @@ cc_library(
     hdrs = ["weaver_op_base.h"],
     deps = [
         ":weaver",
-        "@org_tensorflow//tensorflow/core:framework_headers_lib",
     ],
 )
 
@@ -87,9 +96,8 @@ cc_library(
     name = "deserializing_weaver_op_cc",
     srcs = ["deserializing_weaver_op.cc"],
     deps = [
-        ":weaver",
+        ":weaver", # TODO: try just headers
         ":weaver_op_base",
-        "@org_tensorflow//tensorflow/core:framework_headers_lib",
     ],
     alwayslink = 1,
 )
@@ -97,7 +105,9 @@ cc_library(
 cc_binary(
     name="_deserializing_weaver_op.so",
     srcs = [],
-    deps = [":deserializing_weaver_op_cc"],
+    deps = [
+        ":deserializing_weaver_op_cc",
+    ],
     linkshared = 1,
 )
 
@@ -116,9 +126,9 @@ py_library(
     name = "loom",
     srcs = ["loom.py"],
     deps = [
-        ":deserializing_weaver_op",
         ":loom_proto_py",
         ":pywraptf_weaver",
+        ":deserializing_weaver_op",
         "@org_tensorflow//tensorflow:tensorflow_py",
     ],
 )

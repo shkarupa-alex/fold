@@ -21,6 +21,7 @@ import os.path
 
 # import google3
 import tensorflow as tf
+from tensorflow_fold.loom import pywraptf_weaver  # Required for proper .so loading order
 from tensorflow_fold.loom.weaver_op_base import RegisterWeaverOp
 
 # This is a gross hack that (apparently) prevents Python from

@@ -19,6 +19,7 @@ import math
 # import google3
 import numpy as np
 import six
+import sys
 import tensorflow as tf
 from tensorflow_fold.blocks import blocks as tdb
 from tensorflow_fold.blocks import layers as tdl
@@ -130,9 +131,10 @@ class LayersTest(test_lib.TestCase):
       embeddings = [embedding(tf.constant([x])) for x in [0, 1]]
       sess.run(tf.global_variables_initializer())
       self.assertAllEqual([[[1, 2]], [[3, 4]]], sess.run(embeddings))
-      self.assertRaises(
-          Exception,  # API doesn't specify what tf.gather() throws
-          sess.run, embedding(tf.constant([2])))
+      with self.captureWritesToStream(sys.stderr):
+        self.assertRaises(
+            Exception,  # API doesn't specify what tf.gather() throws
+            sess.run, embedding(tf.constant([2])))
 
   def test_embedding_int8(self):
     weights = np.array([[1, 2], [3, 4]], dtype='float32')
