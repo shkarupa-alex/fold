@@ -8,31 +8,16 @@ licenses(["notice"])  # Apache 2.0
 package(default_visibility = ["//tensorflow_fold:__subpackages__"])
 
 load("@org_tensorflow//tensorflow/core:platform/default/build_config.bzl", "tf_proto_library")
-load("@org_tensorflow//tensorflow:tensorflow.bzl", "tf_py_wrap_cc", "tf_cc_test")
-load("//tensorflow_fold:fold.bzl", "fold_proto_library")
+load("@org_tensorflow//tensorflow:tensorflow.bzl", "tf_py_wrap_cc", "tf_cc_test", "tf_cc_binary")
 
-fold_proto_library(
+
+tf_proto_library(
     name = "loom_proto",
     srcs = ["loom.proto"],
-    cc_deps = [
-        "@org_tensorflow//tensorflow/core:protos_all_cc",
-    ],
     protodeps = [
         "@org_tensorflow//tensorflow/core:protos_all",
     ]
 )
-#tf_proto_library(
-#    name = "loom_proto",
-#    srcs = ["loom.proto"],
-#    protodeps = [
-#        "@org_tensorflow//tensorflow/core:protos_all",
-#    ]
-#)
-#cc_library(
-#    name = "mylib",
-#    srcs = ["mylib.so"],
-#    hdrs = ["mylib.h"],
-#)
 
 cc_library(
     name = "platform",
@@ -47,7 +32,7 @@ cc_library(
     srcs = ["weaver.cc"],
     hdrs = ["weaver.h"],
     deps = [
-        ":loom_proto_cc",
+        ":loom_proto_cc_headers_only",
         ":platform",
         "@org_tensorflow//third_party/eigen3",
     ],
@@ -58,7 +43,7 @@ tf_cc_test(
     srcs = ["weaver_test.cc"],
     deps = [
         ":weaver",
-#        ":loom_proto_cc",
+        ":loom_proto_cc",
         "//tensorflow_fold/util:test_main",
     ],
 )
@@ -68,7 +53,7 @@ tf_py_wrap_cc(
     srcs = ["python/weaver.i"],
     deps = [
         ":weaver",
-#        ":loom_proto_cc",
+        ":loom_proto_cc",
         "@local_config_python//:python_headers",
     ],
 )
@@ -90,23 +75,14 @@ py_library(
     ],
 )
 
-#  The following three BUILD rules are an example of how you would use
+#  The following two BUILD rules are an example of how you would use
 #  weaver_op_base to define an op.
-cc_library(
-    name = "deserializing_weaver_op_cc",
+tf_cc_binary(
+    name="_deserializing_weaver_op.so",
     srcs = ["deserializing_weaver_op.cc"],
     deps = [
-        ":weaver", # TODO: try just headers
+        ":weaver",
         ":weaver_op_base",
-    ],
-    alwayslink = 1,
-)
-
-cc_binary(
-    name="_deserializing_weaver_op.so",
-    srcs = [],
-    deps = [
-        ":deserializing_weaver_op_cc",
     ],
     linkshared = 1,
 )
@@ -114,13 +90,14 @@ cc_binary(
 py_library(
     name="deserializing_weaver_op",
     srcs = ["deserializing_weaver_op.py"],
-    data = [":_deserializing_weaver_op.so"],
+    data = [
+        ":_deserializing_weaver_op.so",
+    ],
     deps = [
         ":weaver_op_base_py",
         "@org_tensorflow//tensorflow:tensorflow_py",
     ]
 )
-
 
 py_library(
     name = "loom",

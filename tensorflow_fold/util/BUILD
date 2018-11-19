@@ -2,6 +2,7 @@ licenses(["notice"])  # Apache 2.0
 package(default_visibility = ["//visibility:public"])
 
 load("@org_tensorflow//tensorflow/core:platform/default/build_config.bzl", "tf_proto_library")
+load("@org_tensorflow//tensorflow:tensorflow.bzl", "tf_cc_binary")
 
 tf_proto_library(
     name = "test_proto",
@@ -44,7 +45,7 @@ cc_library(
     ],
 )
 
-cc_binary(
+tf_cc_binary(
     name = "proto_tools.so",
     srcs = [],
     deps=[":proto_tools_cc"],

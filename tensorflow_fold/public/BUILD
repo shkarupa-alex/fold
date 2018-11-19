@@ -13,7 +13,6 @@ cc_library(
     name = "loom_cc",
     hdrs = ["loom.h"],
     deps = [
-        "//tensorflow_fold/loom:deserializing_weaver_op_cc",
         "//tensorflow_fold/loom:weaver",
         "//tensorflow_fold/loom:weaver_op_base",
     ],
